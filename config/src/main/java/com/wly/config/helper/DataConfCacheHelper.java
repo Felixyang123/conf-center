@@ -77,6 +77,7 @@ public class DataConfCacheHelper implements SmartLifecycle {
         dataConfFlushThread.setName("data-conf-flush-thread");
         dataConfFlushThread.setDaemon(true);
         dataConfFlushThread.start();
+        log.debug("DataConfCacheHelper started");
     }
 
     private void pushClient(List<ConfDataDTO> confDataDTOs) {
@@ -92,6 +93,7 @@ public class DataConfCacheHelper implements SmartLifecycle {
     @Override
     public void stop() {
         running.set(false);
+        log.debug("DataConfCacheHelper stopped");
     }
 
     @Override
@@ -112,5 +114,9 @@ public class DataConfCacheHelper implements SmartLifecycle {
         }
 
         pushClient(confDataDTOs);
+    }
+
+    public ConfDataDTO get(String env, String appname, String key) {
+        return confDataCache.get(buildCacheKey(env, appname, key));
     }
 }

@@ -47,11 +47,13 @@ public class DeferredResultHandler implements SmartLifecycle {
         deferredTasksFlushThread.setName("deferred-tasks-flush-thread");
         deferredTasksFlushThread.setDaemon(true);
         deferredTasksFlushThread.start();
+        log.debug("DeferredResultHandler started");
     }
 
     @Override
     public void stop() {
         running.set(false);
+        log.debug("DeferredResultHandler stopped");
     }
 
     @Override
@@ -63,12 +65,13 @@ public class DeferredResultHandler implements SmartLifecycle {
         return env + ":" + appname;
     }
 
-    public void addDeferredResult(String env, String appname, DeferredResult<Object> deferredResult) {
+    public void addDeferredResult(String env, String appname, DeferredResult deferredResult) {
         deferredResultsCache.computeIfAbsent(buildCacheKey(env, appname), k -> new CopyOnWriteArrayList<>()).add(deferredResult);
     }
 
     public void pushClient(String env, String appname) {
         String cacheKey = buildCacheKey(env, appname);
+        log.debug("Push client: {}", cacheKey);
         CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = deferredResultsCache.remove(cacheKey);
         if (deferredResults != null) {
             for (DeferredResult<Object> deferredResult : deferredResults) {

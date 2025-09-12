@@ -54,11 +54,13 @@ public class MessageHelper implements SmartLifecycle {
         messageFlushThread.setName("message-flush-thread");
         messageFlushThread.setDaemon(true);
         messageFlushThread.start();
+        log.debug("MessageHelper started");
     }
 
     @Override
     public void stop() {
         running.set(false);
+        log.debug("MessageHelper stopped");
     }
 
     @Override
