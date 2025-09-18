@@ -2,6 +2,7 @@ package com.wly.config.server.helper;
 
 import com.wly.config.server.dao.entity.Message;
 import com.wly.config.server.helper.bean.ConfDataMessage;
+import com.wly.config.server.helper.bean.InstanceMessage;
 import com.wly.config.server.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class MessageHelper implements SmartLifecycle {
     private final MessageService messageService;
 
     private final DataConfCacheHelper dataConfCacheHelper;
+
+    private final RegistryCacheHelper registryCacheHelper;
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -40,8 +44,14 @@ public class MessageHelper implements SmartLifecycle {
                 List<Message> messages = messageService.queryFromOffset(offset, queryLimit);
 
                 while (!CollectionUtils.isEmpty(messages)) {
-                    List<ConfDataMessage> confDataMessages = messages.stream().map(ConfDataMessage::buildFromMessage).toList();
+                    List<ConfDataMessage> confDataMessages = messages.stream().filter(message ->
+                            Objects.equals(message.getType(), Message.CONF_DATA)).map(ConfDataMessage::buildFromMessage).toList();
                     dataConfCacheHelper.checkAndPush(confDataMessages);
+
+                    List<InstanceMessage> instanceMessages = messages.stream().filter(message ->
+                            Objects.equals(message.getType(), Message.CONF_INSTANCE)).map(InstanceMessage::parseFromMessage).toList();
+                    registryCacheHelper.checkAndPush(instanceMessages);
+
                     offset = messages.getLast().getId() + 1;
                     messages = messageService.queryFromOffset(offset, queryLimit);
                 }
@@ -71,5 +81,9 @@ public class MessageHelper implements SmartLifecycle {
     @Override
     public boolean isRunning() {
         return false;
+    }
+
+    public void broadcast(List<Message> messages) {
+        messageService.saveBatch(messages);
     }
 }
