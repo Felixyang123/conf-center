@@ -45,19 +45,12 @@ public class OpenDataConfController {
             Map<String, String> innerConfDataMd5Map = new HashMap<>();
             for (String key : keys) {
                 ConfDataDTO confDataDTO = dataConfCacheHelper.get(env, appname, key);
-                if (confDataDTO == null) {
-                    confDataDTO = ConfDataDTO.builder()
-                            .env(env)
-                            .appname(appname)
-                            .key(key)
-                            .value("")
-                            .md5("")
-                            .build();
-                }
-                innerConfDataMd5Map.put(key, confDataDTO.getMd5());
+                if (confDataDTO != null) {
+                    innerConfDataMd5Map.put(key, confDataDTO.getMd5());
 
-                if (Boolean.TRUE.equals(req.getQueryDetail())) {
-                    innerConfDataMap.put(key, confDataDTO);
+                    if (Boolean.TRUE.equals(req.getQueryDetail())) {
+                        innerConfDataMap.put(key, confDataDTO);
+                    }
                 }
             }
 

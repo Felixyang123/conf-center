@@ -63,14 +63,14 @@ public class DataConfCacheHelper implements SmartLifecycle {
                     pushClient(confDataDiff);
                     this.confDataCache = confDataCacheNew;
                 }
-            }
 
-            try {
-                Thread.sleep(flushInterval);
-            } catch (InterruptedException e) {
-                log.warn("Thread interrupted");
-                if (Thread.interrupted()) {
-                    Thread.currentThread().interrupt();
+                try {
+                    Thread.sleep(flushInterval);
+                } catch (InterruptedException e) {
+                    log.warn("Thread interrupted");
+                    if (Thread.interrupted()) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         });

@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class ConfClientConfiguration {
     }
 
     @Bean
+    @DependsOn("confHelper")
     public ConfListenProcessor confListenProcessor(ConfListenerRegistrar confListenerRegistrar, ApplicationContext applicationContext) {
         return new ConfListenProcessor(confListenerRegistrar, applicationContext);
     }

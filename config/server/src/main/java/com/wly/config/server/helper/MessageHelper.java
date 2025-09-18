@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,12 +35,16 @@ public class MessageHelper implements SmartLifecycle {
         running.set(true);
 
         Thread messageFlushThread = new Thread(() -> {
+            long offset = 1;
             while (running.get()) {
-                long offset = 1;
                 List<Message> messages = messageService.queryFromOffset(offset, queryLimit);
 
-                List<ConfDataMessage> confDataMessages = messages.stream().map(ConfDataMessage::buildFromMessage).toList();
-                dataConfCacheHelper.checkAndPush(confDataMessages);
+                while (!CollectionUtils.isEmpty(messages)) {
+                    List<ConfDataMessage> confDataMessages = messages.stream().map(ConfDataMessage::buildFromMessage).toList();
+                    dataConfCacheHelper.checkAndPush(confDataMessages);
+                    offset = messages.getLast().getId() + 1;
+                    messages = messageService.queryFromOffset(offset, queryLimit);
+                }
 
                 try {
                     Thread.sleep(flushInterval);

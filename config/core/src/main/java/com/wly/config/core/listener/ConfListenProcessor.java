@@ -20,7 +20,7 @@ public record ConfListenProcessor(ConfListenerRegistrar confListenerRegistrar,
                 SpringConfAnnotationListener.reflectSetValue(bean, field.getName(), value);
                 if (confListen.listen()) {
                     SpringConfAnnotationListener confAnnotationListener = new SpringConfAnnotationListener(applicationContext, confListen.appname(), confListen.key());
-                    confAnnotationListener.addBeanNameField(beanName, field.getName());
+                    confAnnotationListener.addBeanNameField(beanName, field.getName(), confListen.defaultValue());
                     confListenerRegistrar.register(List.of(confAnnotationListener));
                 }
             }

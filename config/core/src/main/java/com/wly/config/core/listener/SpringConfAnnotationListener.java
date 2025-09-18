@@ -35,11 +35,12 @@ public class SpringConfAnnotationListener implements ConfListener {
         return appname + ":" + key;
     }
 
-    public void addBeanNameField(String beanName, String fieldName) {
-        beanNameFields.add(new BeanNameField(beanName, fieldName));
+    public void addBeanNameField(String beanName, String fieldName, Object defaultValue) {
+        beanNameFields.add(new BeanNameField(beanName, fieldName, defaultValue));
     }
 
     public static void reflectSetValue(BeanNameField beanNameField, Object value) {
+        value = value == null ? beanNameField.getDefaultValue() : value;
         Object bean = applicationContext.getBean(beanNameField.getBeanName());
         reflectSetValue(bean, beanNameField.getFieldName(), value);
     }

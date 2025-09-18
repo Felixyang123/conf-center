@@ -12,6 +12,7 @@ public class ConfHelper implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ConfHelper.applicationContext = applicationContext;
+        ConfHelper.cacheConfClient = applicationContext.getBean(CacheConfClient.class);
     }
 
     public static String get(String appname, String key, String defaultValue) {

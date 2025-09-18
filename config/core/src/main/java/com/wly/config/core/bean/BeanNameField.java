@@ -11,4 +11,6 @@ public class BeanNameField {
     private String beanName;
 
     private String fieldName;
+
+    private Object defaultValue;
 }

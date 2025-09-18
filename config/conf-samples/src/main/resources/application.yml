@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: config-samples
+
+logging:
+  level:
+    com.wly.config: debug
+server:
+  port: 8081
+
+conf-client:
+  server-address: http://localhost:8080
+  access-token: defaultToken
+  env: dev

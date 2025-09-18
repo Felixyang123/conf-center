@@ -1,5 +1,6 @@
 package com.wly.config.server.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@TableName(value = "conf_message", autoResultMap = true)
 public class Message implements Serializable {
 
     @Serial

@@ -24,6 +24,7 @@
     <modules>
         <module>core</module>
         <module>server</module>
+        <module>conf-samples</module>
     </modules>
     <scm>
         <connection/>

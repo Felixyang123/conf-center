@@ -1,5 +1,7 @@
 package com.wly.config.server.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@TableName(value = "conf_data", autoResultMap = true)
 public class ConfData implements Serializable {
 
     @Serial
@@ -39,6 +42,7 @@ public class ConfData implements Serializable {
     /**
     * 配置项Key
     */
+    @TableField("`key`")
     private String key;
 
     /**
@@ -49,6 +53,7 @@ public class ConfData implements Serializable {
     /**
     * 配置项描述
     */
+    @TableField("`desc`")
     private String desc;
 
     /**

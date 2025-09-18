@@ -12,6 +12,6 @@ import java.util.List;
 public class MessageService extends ServiceImpl<MessageMapper, Message> {
 
     public List<Message> queryFromOffset(long offset, int limit) {
-        return list(Wrappers.< Message>lambdaQuery().ge(Message::getId, offset).last("limit " + limit));
+        return list(Wrappers.< Message>lambdaQuery().ge(Message::getId, offset).orderByAsc(Message::getId).last("limit " + limit));
     }
 }
