@@ -12,13 +12,7 @@ import java.util.Map;
  * HTTP客户端封装类
  */
 @Slf4j
-public class HttpClient {
-
-    private final RestTemplate restTemplate;
-
-    public HttpClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+public record HttpClient(RestTemplate restTemplate) {
 
     /**
      * GET请求
@@ -97,7 +91,7 @@ public class HttpClient {
                     url, HttpMethod.POST, entity, responseType
             );
             return response.getBody();
-        }catch (Exception e) {
+        } catch (Exception e) {
             logRequestError(requestId, HttpMethod.POST, url, e);
             throw new HttpClientException("HTTP request failed: " + e.getMessage(), e);
         }

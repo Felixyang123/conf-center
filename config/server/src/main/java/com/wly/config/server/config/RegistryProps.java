@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "instance")
-public class InstanceProps {
+@ConfigurationProperties(prefix = "registry")
+public class RegistryProps {
 
     /**
      * 心跳间隔 ms

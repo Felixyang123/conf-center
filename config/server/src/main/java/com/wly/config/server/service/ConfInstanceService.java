@@ -1,7 +1,7 @@
 package com.wly.config.server.service;
 
 import com.alibaba.fastjson2.JSON;
-import com.wly.config.server.config.InstanceProps;
+import com.wly.config.server.config.RegistryProps;
 import com.wly.config.server.dao.entity.ConfInstance;
 import com.wly.config.server.dao.entity.Message;
 import com.wly.config.server.dao.rep.ConfInstanceRepository;
@@ -30,7 +30,7 @@ public class ConfInstanceService {
     @Resource
     private ConfInstanceRepository confInstanceRepository;
     @Resource
-    private InstanceProps instanceProps;
+    private RegistryProps registryProps;
     @Resource
     private MessageHelper messageHelper;
     @Resource
@@ -43,7 +43,7 @@ public class ConfInstanceService {
         ConfInstance confInstance = OpenInstanceRegisterReq.parseInstance(req);
         confInstance.setAddTime(new Date());
         confInstance.setUpdateTime(confInstance.getAddTime());
-        confInstance.setExpireTime(System.currentTimeMillis() + instanceProps.getHeartbeatInterval() * 3);
+        confInstance.setExpireTime(System.currentTimeMillis() + registryProps.getHeartbeatInterval() * 3);
         confInstanceRepository.upsertInstance(confInstance);
 
         Message message = Message.builder().type(Message.CONF_INSTANCE).data(JSON.toJSONString(new InstanceMessage(req.getEnv(), req.getAppname())))
@@ -62,8 +62,8 @@ public class ConfInstanceService {
     }
 
     public OpenInstanceDiscoveryResp discovery(OpenInstanceDiscoveryReq req) {
-        Map<String,List<InstanceDTO>> instancesMap=  new HashMap<>();
-        Map<String,String> instancesMD5Map=  new HashMap<>();
+        Map<String, List<InstanceDTO>> instancesMap = new HashMap<>();
+        Map<String, String> instancesMD5Map = new HashMap<>();
 
         for (String appname : req.getAppnames()) {
             String instancesMd5 = registryCacheHelper.getInstancesMd5(req.getEnv(), appname);
@@ -72,11 +72,11 @@ public class ConfInstanceService {
                 instancesMD5Map.put(appname, instancesMd5);
             }
         }
-        return OpenInstanceDiscoveryResp.builder().instances(instancesMap).instancesMd5(instancesMD5Map).build();
+        return OpenInstanceDiscoveryResp.builder().env(req.getEnv()).instances(instancesMap).instancesMd5(instancesMD5Map).build();
     }
 
     public DeferredResult<OpenApiResp<PushClientEnvAppDTO>> watch(OpenInstanceDiscoveryReq req) {
-        DeferredResult<OpenApiResp<PushClientEnvAppDTO>> deferredResult = new DeferredResult<>(30 * 1000L,  OpenApiResp.error("1002", "Subscribe instance timeout"));
+        DeferredResult<OpenApiResp<PushClientEnvAppDTO>> deferredResult = new DeferredResult<>(30 * 1000L, OpenApiResp.error("1002", "Subscribe instance timeout"));
         req.getAppnames().forEach(appname -> deferredResultHandler.addInstanceDeferredResult(req.getEnv(), appname, deferredResult));
         return deferredResult;
     }

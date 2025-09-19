@@ -27,7 +27,7 @@ public class ConfData implements Serializable {
     /**
     * id
     */
-    private long id;
+    private Long id;
 
     /**
     * Env（环境唯一标识）

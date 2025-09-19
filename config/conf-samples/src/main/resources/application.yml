@@ -12,3 +12,8 @@ conf-client:
   server-address: http://localhost:8080
   access-token: defaultToken
   env: dev
+
+instance-client:
+  server-address: http://localhost:8080
+  access-token: defaultToken
+  env: dev

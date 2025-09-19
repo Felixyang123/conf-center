@@ -39,8 +39,8 @@ public class MessageHelper implements SmartLifecycle {
         running.set(true);
 
         Thread messageFlushThread = new Thread(() -> {
-            long offset = 1;
             while (running.get()) {
+                long offset = 1;
                 List<Message> messages = messageService.queryFromOffset(offset, queryLimit);
 
                 while (!CollectionUtils.isEmpty(messages)) {

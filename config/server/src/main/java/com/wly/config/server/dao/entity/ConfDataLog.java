@@ -26,12 +26,12 @@ public class ConfDataLog implements Serializable {
     /**
     * id
     */
-    private long id;
+    private Long id;
 
     /**
     * 配置数据ID
     */
-    private long dataId;
+    private Long dataId;
 
     /**
     * 历史数据，配置项Value

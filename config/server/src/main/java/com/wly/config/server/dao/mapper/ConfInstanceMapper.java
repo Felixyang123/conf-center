@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 public interface ConfInstanceMapper extends BaseMapper<ConfInstance> {
 
     @Insert("""
-            INSERT INTO xxl_conf_instance (
+            INSERT INTO conf_instance (
                         `env`,
                         `appname`,
                         `ip`,
@@ -28,10 +28,10 @@ public interface ConfInstanceMapper extends BaseMapper<ConfInstance> {
                               #{instance.status},
                               #{instance.expireTime},
                               #{instance.addTime},
-                              #{instance.updateTIme}
+                              #{instance.updateTime}
                     )
                     ON DUPLICATE KEY UPDATE
-                        `expireTime` = #{instance.expireTime}
+                        `expire_time` = #{instance.expireTime}
             """)
     int upsert(@Param("instance") ConfInstance instance);
 }

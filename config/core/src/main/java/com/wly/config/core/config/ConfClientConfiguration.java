@@ -5,6 +5,7 @@ import com.wly.config.core.listener.ConfListenProcessor;
 import com.wly.config.core.listener.ConfListener;
 import com.wly.config.core.listener.ConfListenerRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +19,13 @@ import java.util.List;
 @EnableConfigurationProperties({ConfClientProps.class})
 public class ConfClientConfiguration {
     @Bean
+    @ConditionalOnMissingBean(RestTemplate.class)
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
     @Bean
+    @ConditionalOnMissingBean(HttpClient.class)
     public HttpClient httpClient(RestTemplate restTemplate) {
         return new HttpClient(restTemplate);
     }

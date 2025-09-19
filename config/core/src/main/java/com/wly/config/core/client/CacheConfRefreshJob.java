@@ -24,7 +24,7 @@ public class CacheConfRefreshJob implements SmartLifecycle {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    log.warn("Thread interrupted");
+                    log.warn("Config refresh thread interrupted");
                     if (Thread.interrupted()) {
                         Thread.currentThread().interrupt();
                     }

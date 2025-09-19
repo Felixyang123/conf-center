@@ -9,6 +9,7 @@ import com.wly.config.server.utils.DigestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class RegistryCacheHelper implements SmartLifecycle {
     protected final ConcurrentMap<String, List<InstanceDTO>> instanceCache = new ConcurrentHashMap<>();
     protected final ConcurrentMap<String, String> instanceCacheMD5 = new ConcurrentHashMap<>();
@@ -32,7 +35,7 @@ public class RegistryCacheHelper implements SmartLifecycle {
         for (ConfInstance envAndAppname : envAndAppnames) {
             List<ConfInstance> confInstancesDB = instanceRepository.queryByEnvAndAppname(envAndAppname.getEnv(), envAndAppname.getAppname());
             String key = buildCacheKey(envAndAppname.getEnv(), envAndAppname.getAppname());
-            List<InstanceDTO> instanceDTOS = instanceCache.computeIfAbsent(key, k -> confInstancesDB.stream().map(InstanceDTO::buildFromInstance).toList());
+            List<InstanceDTO> instanceDTOS = instanceCache.computeIfAbsent(key, k -> confInstancesDB.stream().map(InstanceDTO::buildFromInstance).collect(Collectors.toList()));
             instanceCacheMD5.put(key, md5(instanceDTOS));
         }
         log.info("init instance cache success, size: {}", instanceCache.size());
@@ -69,7 +72,7 @@ public class RegistryCacheHelper implements SmartLifecycle {
                 continue;
             }
 
-            List<InstanceDTO> instanceDTOS = confInstancesDB.stream().map(InstanceDTO::buildFromInstance).toList();
+            List<InstanceDTO> instanceDTOS = confInstancesDB.stream().map(InstanceDTO::buildFromInstance).collect(Collectors.toList());
             String md5 = md5(instanceDTOS);
             if (!instanceCacheMD5.containsKey(key) || !instanceCacheMD5.get(key).equals(md5)) {
                 instanceCache.put(key, instanceDTOS);

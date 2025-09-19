@@ -25,3 +25,7 @@ mybatis-plus:
 logging:
   level:
     com.wly.config: info
+
+registry:
+  heartbeatInterval: 30000
+
