@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
-import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class InstanceRegisterReq extends OpenApiReq {
+public class OpenInstanceRegisterReq extends OpenApiReq {
     @Serial
     private static final long serialVersionUID = 3089521705642862252L;
 
@@ -22,17 +21,14 @@ public class InstanceRegisterReq extends OpenApiReq {
 
     private String ext;
 
-    public static ConfInstance parseInstance(InstanceRegisterReq req) {
-        Date date = new Date();
+    public static ConfInstance parseInstance(OpenInstanceRegisterReq req) {
         return ConfInstance.builder()
                 .env(req.getEnv())
                 .appname(req.getAppname())
                 .ip(req.getIp())
                 .port(req.getPort())
                 .ext(req.getExt())
-                .status(0)
-                .addTime(date)
-                .updateTime(date)
+                .status(ConfInstance.RUNNING)
                 .build();
     }
 }

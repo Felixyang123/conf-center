@@ -66,16 +66,14 @@ public class OpenDataConfController {
 
     /**
      * 订阅配置
+     *
      * @param req
      * @return
      */
     @PostMapping("/watch")
     public DeferredResult<OpenApiResp<PushClientEnvAppDTO>> watch(@RequestBody OpenDataConfQueryReq req) {
-        DeferredResult<OpenApiResp<PushClientEnvAppDTO>> deferredResult = new DeferredResult<>(30 * 1000L, OpenApiResp.error("1001", "Subscribe timeout"));
-        String env = req.getEnv();
-        req.getAppKeys().forEach((appname, keys) -> {
-            deferredResultHandler.addDeferredResult(env, appname, deferredResult);
-        });
+        DeferredResult<OpenApiResp<PushClientEnvAppDTO>> deferredResult = new DeferredResult<>(30 * 1000L, OpenApiResp.error("1001", "Subscribe config timeout"));
+        req.getAppKeys().forEach((appname, keys) -> deferredResultHandler.addConfigDeferredResult(req.getEnv(), appname, deferredResult));
         return deferredResult;
     }
 }

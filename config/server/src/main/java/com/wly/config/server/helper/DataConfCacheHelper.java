@@ -82,7 +82,7 @@ public class DataConfCacheHelper implements SmartLifecycle {
 
     private void pushClient(List<ConfDataDTO> confDataDTOs) {
         for (ConfDataDTO confDataDTO : confDataDTOs) {
-            deferredResultHandler.pushClient(confDataDTO.getEnv(), confDataDTO.getAppname());
+            deferredResultHandler.pushConfigChangeToClient(confDataDTO.getEnv(), confDataDTO.getAppname());
         }
     }
 

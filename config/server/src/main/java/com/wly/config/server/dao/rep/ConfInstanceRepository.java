@@ -6,6 +6,7 @@ import com.wly.config.server.dao.entity.ConfInstance;
 import com.wly.config.server.dao.mapper.ConfInstanceMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,17 @@ public class ConfInstanceRepository extends ServiceImpl<ConfInstanceMapper, Conf
 
     public List<ConfInstance> queryByEnvAndAppname(String env, String appname) {
         return list(Wrappers.<ConfInstance>lambdaQuery().eq(ConfInstance::getEnv, env).eq(ConfInstance::getAppname, appname)
-                .eq(ConfInstance::getStatus, 0).ge(ConfInstance::getExpireTime, System.currentTimeMillis()));
+                .eq(ConfInstance::getStatus, ConfInstance.RUNNING).ge(ConfInstance::getExpireTime, System.currentTimeMillis()));
+    }
+
+    public boolean invalidInstance(ConfInstance instance) {
+        return update(Wrappers.<ConfInstance>lambdaUpdate().set(ConfInstance::getStatus, ConfInstance.SHOUTDOWN).set(ConfInstance::getUpdateTime, new Date())
+                .eq(ConfInstance::getEnv, instance.getEnv()).eq(ConfInstance::getAppname, instance.getAppname())
+                .eq(ConfInstance::getIp, instance.getIp()).eq(ConfInstance::getPort, instance.getPort())
+                .eq(ConfInstance::getStatus, ConfInstance.RUNNING));
+    }
+
+    public boolean upsertInstance(ConfInstance instance) {
+        return getBaseMapper().upsert(instance) > 0;
     }
 }

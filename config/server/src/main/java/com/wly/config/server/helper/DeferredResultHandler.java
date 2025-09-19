@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 @Slf4j
 public class DeferredResultHandler implements SmartLifecycle {
-    private final ConcurrentMap<String, CopyOnWriteArrayList<DeferredResult<Object>>> deferredResultsCache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CopyOnWriteArrayList<DeferredResult<Object>>> configDeferredResultsCache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CopyOnWriteArrayList<DeferredResult<Object>>> instanceDeferredResultsCache = new ConcurrentHashMap<>();
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -28,8 +29,13 @@ public class DeferredResultHandler implements SmartLifecycle {
 
         Thread deferredTasksFlushThread = new Thread(() -> {
             while (running.get()) {
-                for (String key : deferredResultsCache.keySet()) {
-                    CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = deferredResultsCache.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>());
+                for (String key : configDeferredResultsCache.keySet()) {
+                    CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = configDeferredResultsCache.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>());
+                    deferredResults.removeIf(DeferredResult::isSetOrExpired);
+                }
+
+                for (String key : instanceDeferredResultsCache.keySet()) {
+                    CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = instanceDeferredResultsCache.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>());
                     deferredResults.removeIf(DeferredResult::isSetOrExpired);
                 }
 
@@ -65,14 +71,29 @@ public class DeferredResultHandler implements SmartLifecycle {
         return env + ":" + appname;
     }
 
-    public void addDeferredResult(String env, String appname, DeferredResult deferredResult) {
-        deferredResultsCache.computeIfAbsent(buildCacheKey(env, appname), k -> new CopyOnWriteArrayList<>()).add(deferredResult);
+    public void addConfigDeferredResult(String env, String appname, DeferredResult deferredResult) {
+        configDeferredResultsCache.computeIfAbsent(buildCacheKey(env, appname), k -> new CopyOnWriteArrayList<>()).add(deferredResult);
     }
 
-    public void pushClient(String env, String appname) {
+    public void addInstanceDeferredResult(String env, String appname, DeferredResult deferredResult) {
+        instanceDeferredResultsCache.computeIfAbsent(buildCacheKey(env, appname), k -> new CopyOnWriteArrayList<>()).add(deferredResult);
+    }
+
+    public void pushConfigChangeToClient(String env, String appname) {
         String cacheKey = buildCacheKey(env, appname);
-        log.debug("Push client: {}", cacheKey);
-        CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = deferredResultsCache.remove(cacheKey);
+        log.debug("Push config change to client: {}", cacheKey);
+        CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = configDeferredResultsCache.remove(cacheKey);
+        if (deferredResults != null) {
+            for (DeferredResult<Object> deferredResult : deferredResults) {
+                deferredResult.setResult(new PushClientEnvAppDTO(env, appname));
+            }
+        }
+    }
+
+    public void pushInstanceChangeToClient(String env, String appname) {
+        String cacheKey = buildCacheKey(env, appname);
+        log.debug("Push instance change to client: {}", cacheKey);
+        CopyOnWriteArrayList<DeferredResult<Object>> deferredResults = instanceDeferredResultsCache.remove(cacheKey);
         if (deferredResults != null) {
             for (DeferredResult<Object> deferredResult : deferredResults) {
                 deferredResult.setResult(new PushClientEnvAppDTO(env, appname));

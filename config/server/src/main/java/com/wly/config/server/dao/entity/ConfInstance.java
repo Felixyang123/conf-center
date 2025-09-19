@@ -14,6 +14,8 @@ import java.util.Date;
 @Builder
 @TableName(value = "conf_instance", autoResultMap = true)
 public class ConfInstance {
+    public static final Integer RUNNING = 0;
+    public static final Integer SHOUTDOWN = 1;
 
     private Long id;
 

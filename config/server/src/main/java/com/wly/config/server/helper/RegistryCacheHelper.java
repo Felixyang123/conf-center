@@ -80,7 +80,15 @@ public class RegistryCacheHelper implements SmartLifecycle {
 
         // 通知客户端
         for (InstanceMessage changedInstance : changedInstances) {
-            deferredResultHandler.pushClient(changedInstance.getEnv(), changedInstance.getAppname());
+            deferredResultHandler.pushInstanceChangeToClient(changedInstance.getEnv(), changedInstance.getAppname());
         }
+    }
+
+    public List<InstanceDTO> getInstances(String env, String appname) {
+        return instanceCache.get(buildCacheKey(env, appname));
+    }
+
+    public String getInstancesMd5(String env, String appname) {
+        return instanceCacheMD5.get(buildCacheKey(env, appname));
     }
 }
