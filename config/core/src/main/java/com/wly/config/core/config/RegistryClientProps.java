@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Random;
 
+
 @Data
 @ConfigurationProperties(prefix = "instance-client")
 public class RegistryClientProps {
@@ -13,6 +14,16 @@ public class RegistryClientProps {
     private String accessToken;
 
     private String env;
+
+    private Long heartbeatInterval;
+
+    private String host;
+
+    private String port;
+
+    private String ext;
+
+    private String appname;
 
     public String parseServerAddress() {
         String[] addrs = serverAddress.split(",");

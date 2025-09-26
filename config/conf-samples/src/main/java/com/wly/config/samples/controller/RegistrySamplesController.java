@@ -21,17 +21,24 @@ public class RegistrySamplesController {
 
     @PostMapping("/registry")
     public void registry(@RequestBody OpenInstanceRegisterReq req) {
-        registryClient.register(props.getServerAddress(), props.getAccessToken(), props.getEnv(), req.getAppname(), req.getIp(), req.getPort(), req.getExt());
+        req.setAccessToken(props.getAccessToken());
+        req.setEnv(props.getEnv());
+        req.setHeartbeatInterval(props.getHeartbeatInterval());
+        registryClient.register(props.getServerAddress(), req);
     }
 
     @PostMapping("/unregistry")
     public void unregistry(@RequestBody OpenInstanceRegisterReq req) {
-        registryClient.unregister(props.getServerAddress(), props.getAccessToken(), props.getEnv(), req.getAppname(), req.getIp(), req.getPort(), req.getExt());
+        req.setEnv(props.getEnv());
+        req.setAccessToken(props.getAccessToken());
+        registryClient.unregister(props.getServerAddress(), req);
     }
 
     @PostMapping("/discovery")
     public OpenInstanceDiscoveryResp discovery(@RequestBody OpenInstanceDiscoveryReq req) {
-        return registryClient.discovery(props.getServerAddress(),props.getAccessToken(), props.getEnv(), req.getAppnames());
+        req.setAccessToken(props.getAccessToken());
+        req.setEnv(props.getEnv());
+        return registryClient.discovery(props.getServerAddress(), req);
     }
 
 }

@@ -19,4 +19,6 @@ public class OpenInstanceRegisterReq extends OpenApiReq {
     private String port;
 
     private String ext;
+
+    private Long heartbeatInterval;
 }

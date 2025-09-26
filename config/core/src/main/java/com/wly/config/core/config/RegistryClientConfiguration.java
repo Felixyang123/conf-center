@@ -37,7 +37,7 @@ public class RegistryClientConfiguration {
     }
 
     @Bean
-    public RegistryHelper registryHelper() {
-        return new RegistryHelper();
+    public RegistryHelper registryHelper(CacheRegistryClient cacheRegistryClient, RegistryClient registryClient, RegistryClientProps props) {
+        return new RegistryHelper(cacheRegistryClient, registryClient, props);
     }
 }

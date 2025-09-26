@@ -17,3 +17,7 @@ instance-client:
   server-address: http://localhost:8080
   access-token: defaultToken
   env: dev
+  heartbeatInterval: 30000
+  host: localhost
+  port: ${server.port}
+  appname: ${spring.application.name}

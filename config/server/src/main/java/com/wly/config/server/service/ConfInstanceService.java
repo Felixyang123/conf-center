@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ConfInstanceService {
@@ -43,7 +40,8 @@ public class ConfInstanceService {
         ConfInstance confInstance = OpenInstanceRegisterReq.parseInstance(req);
         confInstance.setAddTime(new Date());
         confInstance.setUpdateTime(confInstance.getAddTime());
-        confInstance.setExpireTime(System.currentTimeMillis() + registryProps.getHeartbeatInterval() * 3);
+        Long hearBeat = Optional.ofNullable(req.getHeartbeatInterval()).orElse(registryProps.getHeartbeatInterval());
+        confInstance.setExpireTime(System.currentTimeMillis() + hearBeat * 3);
         confInstanceRepository.upsertInstance(confInstance);
 
         Message message = Message.builder().type(Message.CONF_INSTANCE).data(JSON.toJSONString(new InstanceMessage(req.getEnv(), req.getAppname())))

@@ -21,6 +21,8 @@ public class OpenInstanceRegisterReq extends OpenApiReq {
 
     private String ext;
 
+    private Long heartbeatInterval;
+
     public static ConfInstance parseInstance(OpenInstanceRegisterReq req) {
         return ConfInstance.builder()
                 .env(req.getEnv())

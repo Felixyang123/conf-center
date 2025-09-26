@@ -1,6 +1,7 @@
 package com.wly.config.core.client;
 
 import com.wly.config.core.bean.pojo.InstanceDTO;
+import com.wly.config.core.bean.pojo.req.OpenInstanceDiscoveryReq;
 import com.wly.config.core.bean.pojo.resp.OpenInstanceDiscoveryResp;
 import com.wly.config.core.config.RegistryClientProps;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,11 @@ public class CacheRegistryClient implements SmartLifecycle {
 
     public List<InstanceDTO> getInstances(String appname) {
         return instancesCache.computeIfAbsent(appname, k -> {
-            OpenInstanceDiscoveryResp discoveryResp = registryClient.discovery(props.parseServerAddress(), props.getAccessToken(), props.getEnv(), List.of(appname));
+            OpenInstanceDiscoveryReq req = new OpenInstanceDiscoveryReq();
+            req.setEnv(props.getEnv());
+            req.setAppnames(List.of(appname));
+            req.setAccessToken(props.getAccessToken());
+            OpenInstanceDiscoveryResp discoveryResp = registryClient.discovery(props.parseServerAddress(), req);
             return Optional.ofNullable(discoveryResp.getInstances().get(appname)).orElse(new ArrayList<>());
         });
     }
@@ -37,7 +42,11 @@ public class CacheRegistryClient implements SmartLifecycle {
         Thread refreshThread = new Thread(() -> {
             while (running.get()) {
                 if (!instancesCache.isEmpty()) {
-                    OpenInstanceDiscoveryResp discoveryResp = registryClient.discovery(props.parseServerAddress(), props.getAccessToken(), props.getEnv(), new ArrayList<>(instancesCache.keySet()));
+                    OpenInstanceDiscoveryReq req = new OpenInstanceDiscoveryReq();
+                    req.setEnv(props.getEnv());
+                    req.setAppnames(new ArrayList<>(instancesCache.keySet()));
+                    req.setAccessToken(props.getAccessToken());
+                    OpenInstanceDiscoveryResp discoveryResp = registryClient.discovery(props.parseServerAddress(), req);
                     if (discoveryResp == null || discoveryResp.getInstances() == null) {
                         instancesCache.clear();
                         instancesMd5Cache.clear();
