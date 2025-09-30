@@ -6,6 +6,7 @@ import com.wly.config.server.open.pojo.req.OpenInstanceDiscoveryReq;
 import com.wly.config.server.open.pojo.req.OpenInstanceRegisterReq;
 import com.wly.config.server.open.pojo.resp.OpenInstanceDiscoveryResp;
 import com.wly.config.server.service.ConfInstanceService;
+import com.wly.config.server.token.AccessTokenCheck;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ public class OpenInstanceController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/register")
     public OpenApiResp<Void> register(@RequestBody OpenInstanceRegisterReq req) {
         instanceService.register(req);
@@ -40,6 +42,7 @@ public class OpenInstanceController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/unregister")
     public OpenApiResp<Void> unregister(@RequestBody OpenInstanceRegisterReq req) {
         instanceService.unregister(req);
@@ -52,6 +55,7 @@ public class OpenInstanceController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/discovery")
     public OpenApiResp<OpenInstanceDiscoveryResp> discovery(@RequestBody OpenInstanceDiscoveryReq req) {
         return OpenApiResp.ok(instanceService.discovery(req));
@@ -62,6 +66,7 @@ public class OpenInstanceController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/watch")
     public DeferredResult<OpenApiResp<PushClientEnvAppDTO>> watch(@RequestBody OpenInstanceDiscoveryReq req) {
         return instanceService.watch(req);

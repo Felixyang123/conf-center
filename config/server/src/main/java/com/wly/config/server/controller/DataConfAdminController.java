@@ -7,15 +7,16 @@ import com.wly.config.server.pojo.req.ConfDataAddReq;
 import com.wly.config.server.pojo.req.ConfDataEditReq;
 import com.wly.config.server.pojo.resp.ConfDataQueryResp;
 import com.wly.config.server.service.ConfDataService;
+import com.wly.sso.core.annotation.SsoCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/data")
+@RequestMapping("/admin/data")
 @RequiredArgsConstructor
-public class DataConfController {
+public class DataConfAdminController {
     private final ConfDataService confDataService;
 
     /**
@@ -24,6 +25,7 @@ public class DataConfController {
      * @param req
      * @return
      */
+    @SsoCheck
     @PostMapping("/add")
     public Result<Void> add(@RequestBody ConfDataAddReq req) {
         confDataService.save(ConfDataAddReq.transfer(req));
@@ -36,6 +38,7 @@ public class DataConfController {
      * @param req
      * @return
      */
+    @SsoCheck
     @PostMapping("/update")
     public Result<Void> update(@RequestBody ConfDataEditReq req) {
         confDataService.updateById(ConfDataEditReq.transfer(req));
@@ -48,6 +51,7 @@ public class DataConfController {
      * @param appname
      * @return
      */
+    @SsoCheck
     @GetMapping("/page")
     public Result<List<ConfDataQueryResp>> page(@RequestParam String env, @RequestParam String appname) {
         List<ConfData> confDataList = confDataService.queryByEnvAndAppname(env, appname);

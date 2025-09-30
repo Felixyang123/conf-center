@@ -13,4 +13,9 @@ public class OpenApiReq implements Serializable {
     private String accessToken;
 
     private String env;
+
+    /**
+     * 来源APP
+     */
+    private String srcApp;
 }

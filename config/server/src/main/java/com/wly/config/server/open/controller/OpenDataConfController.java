@@ -7,6 +7,7 @@ import com.wly.config.server.helper.bean.PushClientEnvAppDTO;
 import com.wly.config.server.open.pojo.OpenApiResp;
 import com.wly.config.server.open.pojo.req.OpenDataConfQueryReq;
 import com.wly.config.server.open.pojo.resp.OpenDataConfQueryResp;
+import com.wly.config.server.token.AccessTokenCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,7 @@ public class OpenDataConfController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/query")
     public OpenApiResp<OpenDataConfQueryResp> query(@RequestBody OpenDataConfQueryReq req) {
 
@@ -70,6 +72,7 @@ public class OpenDataConfController {
      * @param req
      * @return
      */
+    @AccessTokenCheck(tokenExpr = "#req.accessToken", envExpr = "#req.env", appExpr = "#req.srcApp")
     @PostMapping("/watch")
     public DeferredResult<OpenApiResp<PushClientEnvAppDTO>> watch(@RequestBody OpenDataConfQueryReq req) {
         DeferredResult<OpenApiResp<PushClientEnvAppDTO>> deferredResult = new DeferredResult<>(30 * 1000L, OpenApiResp.error("1001", "Subscribe config timeout"));

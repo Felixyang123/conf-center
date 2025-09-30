@@ -36,7 +36,7 @@ CREATE TABLE `conf_data_log` (
 
 CREATE TABLE `conf_instance` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `env` varchar(50) NOT NULL COMMENT '环境标识，如: dev, test, prod',
+  `env` varchar(10) NOT NULL COMMENT '环境标识，如: dev, test, prod',
   `appname` varchar(100) NOT NULL COMMENT '应用名称',
   `ip` varchar(50) NOT NULL COMMENT 'IP地址',
   `port` varchar(20) NOT NULL COMMENT '端口号',
@@ -89,24 +89,24 @@ CREATE TABLE `conf_user` (
     `id`            int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username`      varchar(50) NOT NULL COMMENT '账号',
     `password`      varchar(100) NOT NULL COMMENT '密码加密信息',
-    `token`         varchar(100) DEFAULT NULL COMMENT '登录token',
     `status`        tinyint(4)  NOT NULL COMMENT '状态：0-正常、1-禁用',
-    `real_name`     varchar(50) DEFAULT NULL COMMENT '真实姓名',
-    `role`          varchar(20) NOT NULL COMMENT '角色：ADMIN-管理员，NORMAL-普通用户',
-    `appnames`      varchar(255) DEFAULT NULL COMMENT '授权服务：服务ID列表，多个逗号分割',
-    `add_time`      datetime    NOT NULL COMMENT '新增时间',
+    `salt`          varchar(50) DEFAULT NULL COMMENT '真实姓名',
+    `create_time`      datetime    NOT NULL COMMENT '新增时间',
     `update_time`   datetime    NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `i_username` (`username`) USING BTREE
+    UNIQUE KEY `unique_idx_username` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 CREATE TABLE `conf_access_token` (
    `id`             bigint(20)      NOT NULL AUTO_INCREMENT,
+   `appname`        varchar(50)     NOT NULL COMMENT '服务AppName',
+   `env`            varchar(10)     NOT NULL COMMENT '环境标识，如: dev, test, prod',
    `access_token`   varchar(50)     NOT NULL COMMENT '注册发现AccessToken',
    `status`         tinyint(4)      NOT NULL COMMENT '状态：0-正常、1-禁用',
    `add_time`       datetime        NOT NULL COMMENT '新增时间',
    `update_time`    datetime        NOT NULL COMMENT '更新时间',
-   PRIMARY KEY (`id`)
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `unique_idx_appname_env` (`appname`, `env`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='注册发现AccessToken';
 
 ## —————————————————————— init data ——————————————————
