@@ -25,7 +25,7 @@ public class CacheConfClient {
 
         ConfDataDTO confData = appConfs.computeIfAbsent(key, k -> {
             Map<String, List<String>> confKeys = Map.of(appname, List.of(key));
-            OpenDataConfQueryResp confQueryResp = confClient.query(confClientProps.parseServerAddress(), confClientProps.getAccessToken(), confClientProps.getEnv(), confKeys);
+            OpenDataConfQueryResp confQueryResp = confClient.query(confClientProps.parseServerAddress(), confClientProps.getAccessToken(), confClientProps.getEnv(), confClientProps.getAppname(), confKeys);
             if (confQueryResp != null) {
                 Map<String, ConfDataDTO> remoteAppConfs = confQueryResp.getConfDataMap().get(appname);
                 if (remoteAppConfs != null && remoteAppConfs.containsKey(key)) {
@@ -46,7 +46,7 @@ public class CacheConfClient {
             return;
         }
 
-        OpenDataConfQueryResp confQueryResp = confClient.query(confClientProps.parseServerAddress(), confClientProps.getAccessToken(), confClientProps.getEnv(), confKeys);
+        OpenDataConfQueryResp confQueryResp = confClient.query(confClientProps.parseServerAddress(), confClientProps.getAccessToken(), confClientProps.getEnv(), confClientProps.getAppname(), confKeys);
 
         if (confQueryResp == null || confQueryResp.getConfDataMap() == null) {
             return;

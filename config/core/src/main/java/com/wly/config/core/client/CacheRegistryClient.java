@@ -30,6 +30,7 @@ public class CacheRegistryClient implements SmartLifecycle {
             OpenInstanceDiscoveryReq req = new OpenInstanceDiscoveryReq();
             req.setEnv(props.getEnv());
             req.setAppnames(List.of(appname));
+            req.setSrcApp(props.getAppname());
             req.setAccessToken(props.getAccessToken());
             OpenInstanceDiscoveryResp discoveryResp = registryClient.discovery(props.parseServerAddress(), req);
             return Optional.ofNullable(discoveryResp.getInstances().get(appname)).orElse(new ArrayList<>());

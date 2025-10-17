@@ -14,6 +14,8 @@ public class ConfClientProps {
 
     private String env;
 
+    private String appname;
+
     public String parseServerAddress() {
         String[] addrs = serverAddress.split(",");
         if (addrs.length == 1) {

@@ -3,6 +3,7 @@ package com.wly.config.core.client;
 import com.wly.config.core.bean.pojo.InstanceDTO;
 import com.wly.config.core.bean.pojo.req.OpenInstanceRegisterReq;
 import com.wly.config.core.config.RegistryClientProps;
+import com.wly.config.core.utils.NetworkUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.SmartLifecycle;
 
@@ -29,17 +30,9 @@ public class RegistryHelper implements SmartLifecycle {
         return cacheRegistryClient.getInstances(appname);
     }
 
-    public void register(RegistryClientProps props) {
-        OpenInstanceRegisterReq req = new OpenInstanceRegisterReq();
-        req.setEnv(props.getEnv());
-        req.setAccessToken(props.getAccessToken());
-        req.setAppname(props.getAppname());
-        req.setIp(props.getHost());
-        req.setPort(props.getPort());
-        req.setExt(props.getExt());
-        req.setHeartbeatInterval(props.getHeartbeatInterval());
+    public void register(OpenInstanceRegisterReq req) {
         registryClient.register(props.parseServerAddress(), req);
-        renewTaskMap.put(props.getAppname(), req);
+        renewTaskMap.put(req.getAppname(), req);
     }
 
     /**
@@ -73,7 +66,19 @@ public class RegistryHelper implements SmartLifecycle {
 
     @Override
     public void start() {
-        register(props);
+        try {
+            OpenInstanceRegisterReq req = new OpenInstanceRegisterReq();
+            req.setEnv(props.getEnv());
+            req.setAccessToken(props.getAccessToken());
+            req.setAppname(props.getAppname());
+            req.setSrcApp(props.getAppname());
+            req.setIp(NetworkUtils.getServerIp());
+            req.setPort(props.getPort());
+            req.setExt(props.getExt());
+            register(req);
+        } catch (Exception e) {
+            log.error("Register instance failed, props: {}, ", props, e);
+        }
     }
 
     @Override

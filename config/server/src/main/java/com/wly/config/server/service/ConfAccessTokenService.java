@@ -19,15 +19,15 @@ public class ConfAccessTokenService {
                 .eq(ConfAccessToken::getAppname, appname).eq(ConfAccessToken::getEnv, env));
 
         if (confAccessToken == null) {
-            throw new RuntimeException("应用未注册");
+            throw new RuntimeException("应用未注册 " + appname);
         }
 
         if (!Objects.equals(confAccessToken.getStatus(), 0)) {
-            throw new RuntimeException("应用未启用");
+            throw new RuntimeException("应用未启用 " + appname);
         }
 
         if (!Objects.equals(confAccessToken.getAccessToken(), accessToken)) {
-            throw new RuntimeException("accessToken错误");
+            throw new RuntimeException("accessToken错误 " + appname);
         }
 
         return true;

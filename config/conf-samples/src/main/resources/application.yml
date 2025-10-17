@@ -12,6 +12,7 @@ conf-client:
   server-address: http://localhost:8080
   access-token: defaultToken
   env: dev
+  appname: ${spring.application.name}
 
 instance-client:
   server-address: http://localhost:8080
